@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Risk Assistant</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-container">
+            <div class="welcome-overlay"></div>
+            <div class="welcome-content">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 15 C30 25, 20 45, 50 55 C80 45, 70 25, 50 15" stroke="white" stroke-width="2" fill="none"/>
+                        <path d="M50 25 C35 32, 28 47, 50 55 C72 47, 65 32, 50 25" stroke="white" stroke-width="2" fill="none"/>
+                        <path d="M50 35 C40 40, 35 48, 50 55 C65 48, 60 40, 50 35" stroke="white" stroke-width="2" fill="none"/>
+                        <circle cx="50" cy="60" r="3" fill="white"/>
+                        <path d="M35 70 Q50 80 65 70" stroke="white" stroke-width="2" fill="none"/>
+                    </svg>
+                </div>
+                <h1>WELCOME</h1>
+                <p class="subtitle">Library Risk Management<br>AI-Powered Assistant</p>
+                <button class="btn-primary" onclick="showScreen('login-screen')">Login With Email</button>
+                <p class="link-text">Don't have an account? <a href="#" onclick="showScreen('signup-screen')">Sign Up</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="logo-small">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 15 C30 25, 20 45, 50 55 C80 45, 70 25, 50 15" stroke="white" stroke-width="2" fill="none"/>
+                        <path d="M50 25 C35 32, 28 47, 50 55 C72 47, 65 32, 50 25" stroke="white" stroke-width="2" fill="none"/>
+                        <circle cx="50" cy="60" r="3" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Sign In</h2>
+                <p class="auth-subtitle">Sign in now to access your library risk assistant.</p>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <input type="email" id="login-email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="login-password" placeholder="Password" required>
+                    </div>
+                    <p id="login-error" class="error-text"></p>
+                    <button type="submit" class="btn-auth">LOGIN</button>
+                </form>
+                <p class="link-text">Don't have an account? <a href="#" onclick="showScreen('signup-screen')">Sign Up</a></p>
+            </div>
+            <div class="leaves-decoration"></div>
+        </div>
+    </div>
+
+    <!-- Signup Screen -->
+    <div id="signup-screen" class="screen">
+        <div class="auth-container">
+            <div class="auth-card">
+                <div class="logo-small">
+                    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 15 C30 25, 20 45, 50 55 C80 45, 70 25, 50 15" stroke="white" stroke-width="2" fill="none"/>
+                        <path d="M50 25 C35 32, 28 47, 50 55 C72 47, 65 32, 50 25" stroke="white" stroke-width="2" fill="none"/>
+                        <circle cx="50" cy="60" r="3" fill="white"/>
+                    </svg>
+                </div>
+                <h2>Sign Up</h2>
+                <p class="auth-subtitle">Sign up now for free and start exploring.</p>
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="input-group">
+                        <input type="text" id="signup-name" placeholder="Name" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="signup-email" placeholder="Email Address" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signup-password" placeholder="Password" required>
+                    </div>
+                    <p id="signup-error" class="error-text"></p>
+                    <button type="submit" class="btn-auth">SIGNUP</button>
+                </form>
+                <p class="link-text">Already have an account? <a href="#" onclick="showScreen('login-screen')">Sign In</a></p>
+            </div>
+            <div class="leaves-decoration"></div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-container">
+            <div class="chat-bg"></div>
+            <div class="chat-content">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message bot-message">
+                        <div class="message-bubble">
+                            <p>Hello, how can I help you today, my friend?</p>
+                        </div>
+                        <div class="heart-icon">♡</div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="search-box">
+                        <span class="mic-icon">🎤</span>
+                        <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." onkeypress="handleKeyPress(event)">
+                        <span class="search-icon" onclick="sendMessage()">🔍</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+</html>

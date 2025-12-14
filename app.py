@@ -13,7 +13,7 @@ import sqlite3
 import hashlib
 import secrets
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static', static_url_path='')
 CORS(app)
 
 # Model paths
@@ -207,7 +207,7 @@ def hash_pw(pw):
 # Routes
 @app.route('/')
 def home():
-    return jsonify({"status": "ok", "message": "Library Risk API is running"})
+    return app.send_static_file('index.html')
 
 
 @app.route('/api/signup', methods=['POST'])
