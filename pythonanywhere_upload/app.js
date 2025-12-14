@@ -1,4 +1,4 @@
-// API Configuration - Same domain
+// API Configuration
 const API_URL = '/api';
 
 // State
@@ -18,6 +18,7 @@ async function handleLogin(event) {
     const errorEl = document.getElementById('login-error');
 
     errorEl.textContent = 'جاري تسجيل الدخول...';
+    errorEl.style.color = '#a78bfa';
 
     try {
         const response = await fetch(`${API_URL}/login`, {
@@ -36,9 +37,11 @@ async function handleLogin(event) {
             showScreen('chat-screen');
             showWelcomeMessage();
         } else {
+            errorEl.style.color = '#ffb3b3';
             errorEl.textContent = data.message || 'فشل تسجيل الدخول';
         }
     } catch (error) {
+        errorEl.style.color = '#ffb3b3';
         errorEl.textContent = 'خطأ في الاتصال بالسيرفر';
     }
 }
@@ -52,6 +55,7 @@ async function handleSignup(event) {
     const errorEl = document.getElementById('signup-error');
 
     errorEl.textContent = 'جاري إنشاء الحساب...';
+    errorEl.style.color = '#a78bfa';
 
     try {
         const response = await fetch(`${API_URL}/signup`, {
@@ -70,9 +74,11 @@ async function handleSignup(event) {
             showScreen('chat-screen');
             showWelcomeMessage();
         } else {
+            errorEl.style.color = '#ffb3b3';
             errorEl.textContent = data.message || 'فشل إنشاء الحساب';
         }
     } catch (error) {
+        errorEl.style.color = '#ffb3b3';
         errorEl.textContent = 'خطأ في الاتصال بالسيرفر';
     }
 }
@@ -171,7 +177,6 @@ function removeTyping(id) {
 function logout() {
     localStorage.removeItem('user');
     currentUser = null;
-    // مسح الرسائل عند الخروج
     document.getElementById('chat-messages').innerHTML = '';
     showScreen('welcome-screen');
 }
@@ -189,7 +194,7 @@ async function toggleHistory() {
 
 async function loadHistory() {
     const historyList = document.getElementById('history-list');
-    historyList.innerHTML = '<p style="text-align:center;">جاري التحميل...</p>';
+    historyList.innerHTML = '<p style="text-align:center;color:#a78bfa;">جاري التحميل...</p>';
 
     try {
         const response = await fetch(`${API_URL}/history`, {
@@ -208,10 +213,10 @@ async function loadHistory() {
                 </div>
             `).join('');
         } else {
-            historyList.innerHTML = '<p style="text-align:center;color:#888;">لا توجد مشاكل مسجلة بعد</p>';
+            historyList.innerHTML = '<p style="text-align:center;color:#6e7681;">لا توجد مشاكل مسجلة بعد</p>';
         }
     } catch (error) {
-        historyList.innerHTML = '<p style="text-align:center;color:red;">خطأ في تحميل السجل</p>';
+        historyList.innerHTML = '<p style="text-align:center;color:#ef4444;">خطأ في تحميل السجل</p>';
     }
 }
 
@@ -223,7 +228,7 @@ async function clearHistory() {
             method: 'POST',
             headers: { 'Authorization': 'Bearer ' + currentUser.token }
         });
-        document.getElementById('history-list').innerHTML = '<p style="text-align:center;color:#888;">لا توجد مشاكل مسجلة بعد</p>';
+        document.getElementById('history-list').innerHTML = '<p style="text-align:center;color:#6e7681;">لا توجد مشاكل مسجلة بعد</p>';
     } catch (error) {
         alert('خطأ في مسح السجل');
     }
@@ -239,13 +244,14 @@ function showWelcomeMessage() {
             <div class="message-bubble">
                 <p>مرحباً ${currentUser ? currentUser.name : ''}! 👋</p>
                 <p>أنا مساعدك في إدارة مخاطر المكتبات 📚</p>
-                <p>اكتب لي أي مشكلة وسأساعدك في تصنيفها وإيجاد الحلول.</p>
+                <p>اكتب لي أي مشكلة وسأساعدك في تصنيفها وإيجاد الحلول ✨</p>
             </div>
         `;
         messagesContainer.appendChild(welcomeDiv);
     }
 }
 
+// Initialize
 window.onload = function () {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
