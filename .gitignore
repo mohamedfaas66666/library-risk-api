@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.env
+
+# Database
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary
+*.log
+*.tmp
+
+# Subfolders with their own git
+web/
+data/
+deploy/
+images/
+pythonanywhere_ready/
+pythonanywhere_upload/
+.kiro/

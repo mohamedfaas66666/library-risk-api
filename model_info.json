@@ -1,0 +1,15 @@
+{
+  "training_date": "2025-12-14T18:06:07.596606",
+  "accuracy": 0.9995117982099267,
+  "num_samples": 30725,
+  "num_features": 5000,
+  "model_type": "RandomForestClassifier",
+  "categories": [
+    "أمنية",
+    "إدارية",
+    "بيئية",
+    "تشغيلية",
+    "تقنية",
+    "مادية/معدات"
+  ]
+}
