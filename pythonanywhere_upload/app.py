@@ -129,11 +129,57 @@ def init_db():
         token TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
+    # جدول المشاكل لكل مستخدم
+    conn.execute('''CREATE TABLE IF NOT EXISTS problems (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        problem_text TEXT NOT NULL,
+        category TEXT NOT NULL,
+        confidence REAL NOT NULL,
+        solutions TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id)
+    )''')
     conn.commit()
     conn.close()
 
 
 init_db()
+
+
+def get_user_by_token(token):
+    """الحصول على المستخدم من التوكن"""
+    if not token:
+        return None
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM users WHERE token = ?', (token,))
+    user = cur.fetchone()
+    conn.close()
+    return user
+
+
+def save_problem(user_id, problem_text, category, confidence, solutions):
+    """حفظ المشكلة للمستخدم"""
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('''INSERT INTO problems (user_id, problem_text, category, confidence, solutions)
+                   VALUES (?, ?, ?, ?, ?)''',
+                (user_id, problem_text, category, confidence, ','.join(solutions) if isinstance(solutions, list) else solutions))
+    conn.commit()
+    conn.close()
+
+
+def get_user_problems(user_id):
+    """الحصول على مشاكل المستخدم"""
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('''SELECT problem_text, category, confidence, solutions, created_at
+                   FROM problems WHERE user_id = ? ORDER BY created_at DESC''', (user_id,))
+    problems = cur.fetchall()
+    conn.close()
+    return [{'problem': p[0], 'category': p[1], 'confidence': p[2],
+             'solutions': p[3].split(','), 'created_at': p[4]} for p in problems]
 
 
 def hash_pw(pw):
@@ -218,6 +264,8 @@ def login():
 @app.route('/api/chat', methods=['POST'])
 def chat():
     message = request.json.get('message', '').strip()
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    
     if not message:
         return jsonify({'success': False, 'message': 'الرسالة مطلوبة'}), 400
     
@@ -231,7 +279,6 @@ def chat():
     # Get info from RISK_INFO, try exact match first, then partial match
     info = RISK_INFO.get(category)
     if not info:
-        # Try to find partial match
         for key in RISK_INFO:
             if key in category or category in key:
                 info = RISK_INFO[key]
@@ -239,11 +286,17 @@ def chat():
         if not info:
             info = RISK_INFO['عام']
     
+    solutions = info['solutions'][:5] if len(info['solutions']) > 5 else info['solutions']
+    
+    # حفظ المشكلة للمستخدم إذا كان مسجل دخول
+    user = get_user_by_token(token)
+    if user:
+        save_problem(user['id'], message, category, confidence * 100, solutions)
+    
     response = f"🔍 تصنيف المخاطر: {category}\n\n"
     response += f"📋 {info['description']}\n\n"
     response += f"📊 نسبة الثقة: {confidence:.1%}\n\n"
     response += "💡 الحلول المقترحة:\n"
-    solutions = info['solutions'][:5] if len(info['solutions']) > 5 else info['solutions']
     for i, sol in enumerate(solutions, 1):
         response += f"{i}. {sol}\n"
     
@@ -253,6 +306,37 @@ def chat():
         'category': category,
         'confidence': round(confidence * 100, 1)
     })
+
+
+@app.route('/api/history', methods=['GET'])
+def history():
+    """الحصول على سجل المشاكل للمستخدم"""
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user = get_user_by_token(token)
+    
+    if not user:
+        return jsonify({'success': False, 'message': 'يجب تسجيل الدخول'}), 401
+    
+    problems = get_user_problems(user['id'])
+    return jsonify({'success': True, 'problems': problems})
+
+
+@app.route('/api/clear-history', methods=['POST'])
+def clear_history():
+    """مسح سجل المشاكل للمستخدم"""
+    token = request.headers.get('Authorization', '').replace('Bearer ', '')
+    user = get_user_by_token(token)
+    
+    if not user:
+        return jsonify({'success': False, 'message': 'يجب تسجيل الدخول'}), 401
+    
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM problems WHERE user_id = ?', (user['id'],))
+    conn.commit()
+    conn.close()
+    
+    return jsonify({'success': True, 'message': 'تم مسح السجل'})
 
 
 @app.route('/api/health', methods=['GET'])
