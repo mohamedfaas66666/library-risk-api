@@ -16,16 +16,17 @@ import secrets
 app = Flask(__name__)
 CORS(app)
 
+# Use absolute path for PythonAnywhere
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 # ============ Risk Classifier ============
 class RiskClassifier:
 
-    def __init__(self):
-        self.model = pickle.load(open(os.path.join(BASE_DIR, "best_model.pkl"), "rb"))
-        self.tfidf = pickle.load(open(os.path.join(BASE_DIR, "tfidf.pkl"), "rb"))
-        self.labels = json.load(open(os.path.join(BASE_DIR, "labels.json"), "r", encoding="utf-8"))
+    def __init__(self, base_path):
+        self.model = pickle.load(open(os.path.join(base_path, "best_model.pkl"), "rb"))
+        self.tfidf = pickle.load(open(os.path.join(base_path, "tfidf.pkl"), "rb"))
+        self.labels = json.load(open(os.path.join(base_path, "labels.json"), "r", encoding="utf-8"))
         
         self.stopwords = {'في', 'من', 'على', 'إلى', 'عن', 'مع', 'هذا', 'هذه', 'التي', 'الذي',
                          'أن', 'إن', 'كان', 'كانت', 'يكون', 'تكون', 'هو', 'هي', 'هم', 'هن',
@@ -60,7 +61,7 @@ class RiskClassifier:
 classifier = None
 model_error = None
 try:
-    classifier = RiskClassifier()
+    classifier = RiskClassifier(BASE_DIR)
     print("✅ Model loaded successfully")
 except Exception as e:
     model_error = str(e)
@@ -74,13 +75,13 @@ if os.path.exists(SOLUTIONS_PATH):
         SOLUTIONS_DATA = json.load(f)
 
 RISK_INFO = {
-    "أمنية": {"description": "مخاطر أمنية", "solutions": SOLUTIONS_DATA.get("أمنية", ["تركيب كاميرات", "توظيف حراس"])},
-    "بيئية": {"description": "مخاطر بيئية", "solutions": SOLUTIONS_DATA.get("بيئية", ["تركيب تكييف", "صيانة تهوية"])},
-    "تقنية": {"description": "مخاطر تقنية", "solutions": SOLUTIONS_DATA.get("تقنية", ["تحديث الأنظمة", "نسخ احتياطية"])},
-    "تشغيلية": {"description": "مخاطر تشغيلية", "solutions": SOLUTIONS_DATA.get("تشغيلية", ["إجراءات موحدة", "تدريب"])},
-    "إدارية": {"description": "مخاطر إدارية", "solutions": SOLUTIONS_DATA.get("إدارية", ["خطة استراتيجية", "تحسين التواصل"])},
-    "مادية/معدات": {"description": "مخاطر مادية", "solutions": SOLUTIONS_DATA.get("مادية/معدات", ["صيانة دورية", "استبدال قديم"])},
-    "عام": {"description": "مخاطر عامة", "solutions": ["تقييم شامل", "خطط طوارئ"]}
+    "أمنية": {"description": "مخاطر تتعلق بالأمن والحماية", "solutions": SOLUTIONS_DATA.get("أمنية", ["تركيب كاميرات مراقبة", "توظيف حراس أمن", "تركيب بوابات إلكترونية"])},
+    "بيئية": {"description": "مخاطر بيئية وطبيعية", "solutions": SOLUTIONS_DATA.get("بيئية", ["تركيب نظام تكييف", "صيانة دورية للتهوية", "عزل النوافذ"])},
+    "تقنية": {"description": "مخاطر تقنية وتكنولوجية", "solutions": SOLUTIONS_DATA.get("تقنية", ["تحديث الأنظمة", "نسخ احتياطية يومية", "برامج حماية"])},
+    "تشغيلية": {"description": "مخاطر تشغيلية يومية", "solutions": SOLUTIONS_DATA.get("تشغيلية", ["إجراءات تشغيلية موحدة", "تدريب الموظفين", "أتمتة العمليات"])},
+    "إدارية": {"description": "مخاطر إدارية وتنظيمية", "solutions": SOLUTIONS_DATA.get("إدارية", ["خطة استراتيجية", "تحسين التواصل", "تدريب وتطوير"])},
+    "مادية/معدات": {"description": "مخاطر مادية ومعدات", "solutions": SOLUTIONS_DATA.get("مادية/معدات", ["صيانة دورية", "استبدال المعدات القديمة", "قطع غيار احتياطية"])},
+    "عام": {"description": "مخاطر عامة متنوعة", "solutions": ["تقييم شامل للمخاطر", "خطط طوارئ", "مراجعة دورية"]}
 }
 
 # ============ Database ============
@@ -204,11 +205,16 @@ def chat():
     info = RISK_INFO.get(category, RISK_INFO['عام'])
     solutions = info['solutions'][:5]
     
-    response = f"🔍 التصنيف: {category}\n📋 {info['description']}\n📊 الثقة: {confidence:.1%}\n\n💡 الحلول:\n"
+    response = f"🔍 التصنيف: {category}\n📋 {info['description']}\n📊 الثقة: {confidence:.1%}\n\n💡 الحلول المقترحة:\n"
     for i, sol in enumerate(solutions, 1):
         response += f"{i}. {sol}\n"
     
     return jsonify({'success': True, 'answer': response, 'category': category})
+
+
+@app.route('/api/health')
+def health():
+    return jsonify({'status': 'ok', 'model': classifier is not None})
 
 
 if __name__ == '__main__':
