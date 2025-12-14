@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مساعد إدارة مخاطر المكتبات</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Welcome Screen -->
+    <div id="welcome-screen" class="screen active">
+        <div class="welcome-container">
+            <div class="welcome-bg"></div>
+            <div class="welcome-overlay"></div>
+            <div class="welcome-content">
+                <div class="logo-container">
+                    <img src="/images/1.png" alt="Logo" class="logo-img">
+                </div>
+                <h1>مرحباً بك</h1>
+                <p class="subtitle">نظام إدارة مخاطر المكتبات<br>مدعوم بالذكاء الاصطناعي</p>
+                <button class="btn-primary" onclick="showScreen('login-screen')">تسجيل الدخول</button>
+                <p class="link-text">ليس لديك حساب؟ <a href="#" onclick="showScreen('signup-screen')">إنشاء حساب</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="screen">
+        <div class="auth-container">
+            <div class="auth-bg"></div>
+            <div class="auth-card">
+                <div class="logo-small"><img src="/images/1.png" alt="Logo"></div>
+                <h2>تسجيل الدخول</h2>
+                <p class="auth-subtitle">سجل دخولك للوصول إلى مساعد إدارة المخاطر</p>
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <input type="email" id="login-email" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="login-password" placeholder="كلمة المرور" required>
+                    </div>
+                    <p id="login-error" class="error-text"></p>
+                    <button type="submit" class="btn-auth">دخول</button>
+                </form>
+                <p class="link-text">ليس لديك حساب؟ <a href="#" onclick="showScreen('signup-screen')">إنشاء حساب</a></p>
+                <p class="link-text back-link"><a href="#" onclick="showScreen('welcome-screen')">← العودة</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Screen -->
+    <div id="signup-screen" class="screen">
+        <div class="auth-container">
+            <div class="auth-bg"></div>
+            <div class="auth-card">
+                <div class="logo-small"><img src="/images/1.png" alt="Logo"></div>
+                <h2>إنشاء حساب</h2>
+                <p class="auth-subtitle">أنشئ حسابك الآن وابدأ في استكشاف النظام</p>
+                <form id="signup-form" onsubmit="handleSignup(event)">
+                    <div class="input-group">
+                        <input type="text" id="signup-name" placeholder="الاسم" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="email" id="signup-email" placeholder="البريد الإلكتروني" required>
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="signup-password" placeholder="كلمة المرور" required>
+                    </div>
+                    <p id="signup-error" class="error-text"></p>
+                    <button type="submit" class="btn-auth">إنشاء حساب</button>
+                </form>
+                <p class="link-text">لديك حساب بالفعل؟ <a href="#" onclick="showScreen('login-screen')">تسجيل الدخول</a></p>
+                <p class="link-text back-link"><a href="#" onclick="showScreen('welcome-screen')">← العودة</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Screen -->
+    <div id="chat-screen" class="screen">
+        <div class="chat-container">
+            <div class="chat-bg"></div>
+            <div class="chat-header">
+                <div class="header-content">
+                    <img src="/images/1.png" alt="Logo" class="header-logo">
+                    <div class="header-text">
+                        <h3>مساعد المخاطر</h3>
+                        <span class="status">متصل</span>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">خروج</button>
+            </div>
+            <div class="chat-content">
+                <div id="chat-messages" class="chat-messages">
+                    <div class="message bot-message">
+                        <div class="bot-avatar"><img src="/images/1.png" alt="Bot"></div>
+                        <div class="message-bubble">
+                            <p>مرحباً! أنا مساعدك في إدارة مخاطر المكتبات 📚</p>
+                            <p>اكتب لي أي مشكلة أو خطر تواجهه وسأساعدك في تصنيفه وإيجاد الحلول المناسبة.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="chat-input-area">
+                    <div class="input-box">
+                        <input type="text" id="chat-input" placeholder="اكتب سؤالك هنا..." onkeypress="handleKeyPress(event)">
+                        <button class="send-btn" onclick="sendMessage()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/app.js"></script>
+</body>
+</html>
