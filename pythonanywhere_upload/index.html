@@ -88,17 +88,12 @@
                         <span class="status">متصل</span>
                     </div>
                 </div>
+                <button class="history-btn" onclick="toggleHistory()">📋 السجل</button>
                 <button class="logout-btn" onclick="logout()">خروج</button>
             </div>
             <div class="chat-content">
                 <div id="chat-messages" class="chat-messages">
-                    <div class="message bot-message">
-                        <div class="bot-avatar"><img src="/images/1.png" alt="Bot"></div>
-                        <div class="message-bubble">
-                            <p>مرحباً! أنا مساعدك في إدارة مخاطر المكتبات 📚</p>
-                            <p>اكتب لي أي مشكلة أو خطر تواجهه وسأساعدك في تصنيفه وإيجاد الحلول المناسبة.</p>
-                        </div>
-                    </div>
+                    <!-- الرسائل ستظهر هنا - كل مستخدم يبدأ بصفحة فارغة -->
                 </div>
                 <div class="chat-input-area">
                     <div class="input-box">
@@ -111,6 +106,20 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- History Modal -->
+    <div id="history-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📋 سجل المشاكل</h3>
+                <button class="close-btn" onclick="toggleHistory()">×</button>
+            </div>
+            <div id="history-list" class="history-list">
+                <!-- السجل سيظهر هنا -->
+            </div>
+            <button class="clear-history-btn" onclick="clearHistory()">🗑️ مسح السجل</button>
         </div>
     </div>
 
